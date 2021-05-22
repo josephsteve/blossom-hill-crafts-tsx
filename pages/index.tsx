@@ -7,7 +7,7 @@ import '@progress/kendo-theme-bootstrap/dist/all.css';
 
 export default function Home() {
 
-  const {data: products, mutate} = useSWR('/api/products');
+  const {data: products} = useSWR('/api/products');
 
   return (
     <div className={styles.container}>

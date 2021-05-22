@@ -6,9 +6,5 @@ export interface Product {
   price_min: number;
   price_max: number;
   price_sell: number;
-  last_price_change: timestamp;
-}
-
-interface timestamp {
-  "@ts": string;
+  last_price_change: string;
 }

@@ -1,5 +1,5 @@
 import * as faunadb from 'faunadb';
-import { Product } from './models';
+import { Product, Supplier } from './models';
 import moment from 'moment';
 
 const faunaClient = new faunadb.Client({ secret: process.env.FAUNA_SECRET });
@@ -34,4 +34,22 @@ export async function getProducts() {
   });
 
   return prods;
+}
+
+export async function getSuppliers() {
+  let suppliers: Supplier[];
+  ({data: suppliers} = await faunaClient.query(
+    q.Map(
+      q.Paginate(q.Documents(q.Collection('suppliers'))),
+      q.Lambda('supplierRef', q.Let(
+        {supplierDoc: q.Get(q.Var('supplierRef'))},
+        {
+          id: q.Select(['ref', 'id'], q.Var('supplierDoc')),
+          supplier_id: q.Select(['data', 'supplier_id'], q.Var('supplierDoc')),
+          display_name: q.Select(['data', 'display_name'], q.Var('supplierDoc'))
+        }
+      ))
+  )));
+
+  return suppliers;
 }

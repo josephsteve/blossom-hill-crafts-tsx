@@ -1,6 +1,7 @@
 import { GetStaticProps, InferGetStaticPropsType } from 'next';
 import { getSuppliers } from '@/utils/Fauna';
 import SupplierDataTable from '@/components/SupplierDataTable';
+import Page from '@/components/layout/Page';
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const suppliers = await getSuppliers();
@@ -13,6 +14,8 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
 export default function Supplier({suppliers}: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
-    <SupplierDataTable suppliers={suppliers} />
+    <Page>
+      <SupplierDataTable suppliers={suppliers} />
+    </Page>
   );
 }

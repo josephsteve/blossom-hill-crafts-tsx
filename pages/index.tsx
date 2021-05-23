@@ -1,13 +1,25 @@
 import Head from 'next/head'
 import Image from 'next/image'
+import { GetStaticProps } from 'next';
+import { InferGetStaticPropsType } from 'next'
 import styles from '../styles/Home.module.css'
 import useSWR from 'swr';
 import { Grid, GridColumn as Column } from '@progress/kendo-react-grid';
 import '@progress/kendo-theme-bootstrap/dist/all.css';
+import { getProducts } from '../utils/Fauna';
 
-export default function Home() {
+export const getStaticProps: GetStaticProps = async (context) => {
+  const products = await getProducts();
+  return {
+    props: {
+      products,
+    }
+  }
+}
 
-  const {data: products} = useSWR('/api/products');
+export default function Home({products}: InferGetStaticPropsType<typeof getStaticProps>) {
+
+
 
   return (
     <div className={styles.container}>

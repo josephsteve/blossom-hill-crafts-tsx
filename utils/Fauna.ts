@@ -53,3 +53,38 @@ export async function getSuppliers() {
 
   return suppliers;
 }
+
+export async function getSupplierById(id: string) {
+  const data: any = await faunaClient.query(
+    q.Get(q.Ref(q.Collection('suppliers'), id))
+  );
+  const supplier: Supplier = {
+    id: data.ref.id,
+    supplier_id: data.data.supplier_id,
+    display_name: data.data.display_name
+  };
+  return supplier;
+}
+
+export async function addSupplier(supplier: Supplier) {
+  if (supplier.supplier_id === 0) {
+    const data: any = await faunaClient.query(
+      q.Call(q.Function('getMaxSupplierId'), '')
+    );
+    const d = data.data.map((sid: any) => sid.supplier_id);
+    supplier.supplier_id = d[0] + 1; // increment
+  }
+  return await faunaClient.query(
+    q.Create(q.Collection('suppliers'), {
+      data: supplier
+    })
+  );
+}
+
+export async function updateSupplier(supplier: Supplier) {
+  return await faunaClient.query(
+    q.Update(q.Ref(q.Collection('suppliers'), supplier.id), {
+      data: supplier
+    })
+  );
+}

@@ -7,4 +7,6 @@ export interface Product {
   price_max: number;
   price_sell: number;
   last_price_change: string;
+  supplier_ref_id: string;
+  supplier_name: string;
 }

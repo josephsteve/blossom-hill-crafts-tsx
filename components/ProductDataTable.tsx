@@ -23,6 +23,7 @@ export default function ProductDataTable ({products}: {products: Product[]}) {
       <Grid data={products}>
         <Column field="product_id" title="ID" width={80} />
         <Column field="display_name" title="Product Name" />
+        <Column field="supplier_name" title="Supplier Name" />
         <Column field="status" title="Status" cell={cellStatus} />
         <Column field="price_min" format="{0: $#,##.00}" title="Price Min" />
         <Column field="price_max" format="{0: $#,##.00}" title="Price Max" />

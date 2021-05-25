@@ -3,6 +3,7 @@ import { Grid, GridCellProps } from '@progress/kendo-react-grid';
 import { GridColumn as Column } from '@progress/kendo-react-grid/dist/npm/GridColumn';
 import { Box, Button, Flex } from '@chakra-ui/react';
 import { Product } from '@/utils/models';
+import Link from 'next/link';
 
 const cellStatus = (props: GridCellProps) => {
   const status = props.dataItem.status;
@@ -31,7 +32,7 @@ export default function ProductDataTable ({products}: {products: Product[]}) {
         <Column field="last_price_change" format="{0:MM/dd/yyyy}" title="Last Price Change"/>
       </Grid>
       <Flex direction="row" mt={4}>
-        <Button colorScheme="blue">Add New Product</Button>
+        <Link href="/product/new"><Button colorScheme="blue">Add New Product</Button></Link>
       </Flex>
     </Box>
   );

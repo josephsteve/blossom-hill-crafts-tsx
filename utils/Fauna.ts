@@ -19,12 +19,13 @@ export async function getProducts() {
           id: q.Select(['ref', 'id'], q.Var('productDoc')),
           product_id: q.Select(['data', 'product_id'], q.Var('productDoc')),
           display_name: q.Select(['data', 'display_name'], q.Var('productDoc')),
+          description: q.If(q.ContainsPath(['data', 'description'], q.Var('productDoc')), q.Select(['data', 'description'], q.Var('productDoc')), ''),
           status: q.Select(['data', 'status'], q.Var('productDoc')),
-          price_min: q.Select(['data', 'price_min'], q.Var('productDoc')),
-          price_max: q.Select(['data', 'price_max'], q.Var('productDoc')),
+          // price_min: q.Select(['data', 'price_min'], q.Var('productDoc')),
+          // price_max: q.Select(['data', 'price_max'], q.Var('productDoc')),
           price_current: q.Select(['data', 'price_current'], q.Var('productDoc')),
-          price_sell: q.Select(['data', 'price_sell'], q.Var('productDoc')),
-          last_price_change: q.ToString(q.Select(['data', 'last_price_change'], q.Var('productDoc'))),
+          // price_sell: q.Select(['data', 'price_sell'], q.Var('productDoc')),
+          // last_price_change: q.ToString(q.Select(['data', 'last_price_change'], q.Var('productDoc'))),
           supplier_ref_id: q.Select(['ref', 'id'], q.Var('supplierDoc')),
           supplier_name: q.Select(['data', 'display_name'], q.Var('supplierDoc'))
         }
@@ -53,12 +54,13 @@ export async function addProduct(product: Product) {
       data: {
         product_id: product.product_id,
         display_name: product.display_name,
+        description: product?.description,
         status: product.status,
-        price_min: product.price_min,
-        price_max: product.price_max,
+        // price_min: product.price_min,
+        // price_max: product.price_max,
         price_current: product.price_current,
-        price_sell: product.price_sell,
-        last_price_change: q.Time(moment(Date.now()).format('yyyy-MM-DDTHH:mm:00Z')),
+        // price_sell: product.price_sell,
+        // last_price_change: q.Time(moment(Date.now()).format('yyyy-MM-DDTHH:mm:00Z')),
         supplier: q.Ref(q.Collection('suppliers'), product.supplier_ref_id)
       }
     })

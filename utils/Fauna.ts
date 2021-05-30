@@ -41,6 +41,14 @@ export async function getProducts() {
   return prods;
 }
 
+export async function getProductsCount(status?: string) {
+  if (status) {
+    return await faunaClient.query(q.Count(q.Match(q.Index('products_by_status'), status)));
+  } else {
+    return await faunaClient.query(q.Count(q.Match(q.Index('all_products'))));
+  }
+}
+
 export async function addProduct(product: Product) {
   if (product.product_id === 0) {
     const data: any = await faunaClient.query(

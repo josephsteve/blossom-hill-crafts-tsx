@@ -9,7 +9,22 @@ export default function Page(props: PageProps) {
     <>
       <Head {...props} />
       <Header />
-      {props.children}
+      <div className="page-content">
+        {props.children}
+      </div>
+      <style>{`
+        .page-content {
+            background: white;
+            padding: 25px 10px;
+            margin-top: 1px;
+        }
+        .page-content.sticky {
+            padding: 25px 10px;
+        }
+        .page-content.fixed {
+            padding: 70px 10px;
+        }      
+      `}</style>
     </>
   );
 }

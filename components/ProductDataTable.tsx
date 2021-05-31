@@ -37,7 +37,7 @@ export default function ProductDataTable ({products}: {products: Product[]}) {
   const router = useRouter();
 
   const enterEdit = (item: Product) => {
-    console.log(item);
+    router.push(`/product/edit/${item.id}`);
   }
   const MyEditCommandCell = (props: GridCellProps) => (
     <EditCommandCell {...props} enterEdit={enterEdit} />

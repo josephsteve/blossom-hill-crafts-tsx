@@ -13,6 +13,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     // @ts-ignore
     const id = context.params.id;
+    console.log(id);
     const supplier = await getSupplierById(typeof id === 'string' ? id : '');
     return {
       props: { supplier },
@@ -52,6 +53,20 @@ export default function Home({supplier}: InferGetServerSidePropsType<typeof getS
     }
   }
 
+  async function handleDelete(id: string) {
+    try {
+      await fetch(`/api/supplier_delete?id=${id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      await router.push('/supplier');
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <Page>
       <Form
@@ -67,6 +82,7 @@ export default function Home({supplier}: InferGetServerSidePropsType<typeof getS
           <div className="k-form-buttons">
             <Button primary={true} type={'submit'} disabled={!formRenderProps.allowSubmit}>Save</Button>
             <Link href="/supplier"><Button>Cancel</Button></Link>
+            <Button onClick={() => handleDelete(supplier.id)}>Delete</Button>
           </div>
         </FormElement>
       )} />

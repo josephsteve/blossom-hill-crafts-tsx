@@ -6,6 +6,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Supplier } from '@/utils/models';
 import { useRouter } from 'next/router';
+import SupplierDataForm from '@/components/SupplierDataForm';
 
 export default function SupplierNew() {
   const router = useRouter();
@@ -34,26 +35,11 @@ export default function SupplierNew() {
     }
   }
 
+  const initialValues = { supplier_id: 0, display_name: ""};
+
   return (
     <Page>
-      <Form
-        initialValues={
-          { supplier_id: 0, display_name: ""}
-        }
-        onSubmit={handleSubmit} render={(formRenderProps) => (
-        <FormElement style={{ marginInline: 40 }}>
-          <div className="k-mb-3">
-            <Field id={'supplier_id'} name={'supplier_id'} component={supplierIdField} />
-          </div>
-          <div className="k-mb-3">
-            <Field id={'display_name'} name={'display_name'} component={Input} validator={SupplierNameValidator} label={'Supplier Name'} placeholder={'Enter Supplier'} />
-          </div>
-          <div className="k-form-buttons" style={{ marginTop: '20px' }}>
-            <Button primary={true} type={'submit'} disabled={!formRenderProps.allowSubmit}>Save</Button>
-            <Link href="/supplier"><Button>Cancel</Button></Link>
-          </div>
-        </FormElement>
-      )} />
+      <SupplierDataForm initialValues={initialValues} handleSubmit={handleSubmit} />
       <style>{`
           .k-input {
             background-color: #ffffff;

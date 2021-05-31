@@ -21,24 +21,14 @@ export async function getProducts() {
           display_name: q.Select(['data', 'display_name'], q.Var('productDoc')),
           description: q.If(q.ContainsPath(['data', 'description'], q.Var('productDoc')), q.Select(['data', 'description'], q.Var('productDoc')), ''),
           status: q.Select(['data', 'status'], q.Var('productDoc')),
-          // price_min: q.Select(['data', 'price_min'], q.Var('productDoc')),
-          // price_max: q.Select(['data', 'price_max'], q.Var('productDoc')),
           price_current: q.Select(['data', 'price_current'], q.Var('productDoc')),
-          // price_sell: q.Select(['data', 'price_sell'], q.Var('productDoc')),
-          // last_price_change: q.ToString(q.Select(['data', 'last_price_change'], q.Var('productDoc'))),
           supplier_ref_id: q.Select(['ref', 'id'], q.Var('supplierDoc')),
           supplier_name: q.Select(['data', 'display_name'], q.Var('supplierDoc'))
         }
       ))
     )));
 
-  const prods = products.map(prod => {
-    const dt = moment(prod.last_price_change);
-    prod.last_price_change = dt.format('MM/DD/yyyy H:mA');
-    return prod;
-  });
-
-  return prods;
+  return products;
 }
 
 export async function getProductById(id: string) {
@@ -52,11 +42,7 @@ export async function getProductById(id: string) {
       display_name: q.Select(['data', 'display_name'], q.Var('productDoc')),
       description: q.If(q.ContainsPath(['data', 'description'], q.Var('productDoc')), q.Select(['data', 'description'], q.Var('productDoc')), ''),
       status: q.Select(['data', 'status'], q.Var('productDoc')),
-      // price_min: q.Select(['data', 'price_min'], q.Var('productDoc')),
-      // price_max: q.Select(['data', 'price_max'], q.Var('productDoc')),
       price_current: q.Select(['data', 'price_current'], q.Var('productDoc')),
-      // price_sell: q.Select(['data', 'price_sell'], q.Var('productDoc')),
-      // last_price_change: q.ToString(q.Select(['data', 'last_price_change'], q.Var('productDoc'))),
       supplier_ref_id: q.Select(['ref', 'id'], q.Var('supplierDoc')),
       supplier_name: q.Select(['data', 'display_name'], q.Var('supplierDoc'))
     })
@@ -124,6 +110,27 @@ export async function deleteProduct(id: string) {
   );
 }
 
+export async function getPricingLogByProductId(id: string) {
+  const data: any = await faunaClient.query(
+    q.Map(q.Paginate(q.Match(q.Index('pricing_log_by_product'), q.Ref(q.Collection('products'), id))),
+      q.Lambda('pricingRef', q.Let({
+        pricingDoc: q.Get(q.Var('pricingRef'))
+      }, {
+        product_ref_id: q.Select(['ref', 'id'], q.Var('pricingDoc')),
+        price: q.Select(['data', 'price'], q.Var('pricingDoc')),
+        log_date: q.ToString(q.Select(['data', 'log_date'], q.Var('pricingDoc')))
+      }))
+      )
+  );
+
+  const pricinglogs = data.data.map((log: any) => {
+    const dt = moment(log.log_date);
+    log.log_date = dt.format('MM/DD/yyyy h:mmA');
+    return log;
+  });
+
+  return pricinglogs;
+}
 
 export async function getSuppliers() {
   let suppliers: Supplier[];

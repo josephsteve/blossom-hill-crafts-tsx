@@ -12,3 +12,9 @@ export interface Product {
   supplier_ref_id?: string;
   supplier_name?: string;
 }
+
+export interface PricingLog {
+  product_ref_id: string; // Ref(Collection("products"), "300132873901441545")
+  price: number;
+  log_date: string;
+}

@@ -2,9 +2,10 @@ import React from 'react';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useRouter } from 'next/router';
 import Page from '@/components/layout/Page';
-import { getProductById, getSuppliers } from '@/utils/Fauna';
+import { getPricingLogByProductId, getProductById, getSuppliers } from '@/utils/Fauna';
 import ProductDataForm from '@/components/ProductDataForm';
 import { Product } from '@/utils/models';
+import ProductPricingLog from '@/components/ProductPricingLog';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
@@ -13,10 +14,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     console.log(id);
     const product = await getProductById(typeof id === 'string' ? id : '');
     const suppliers = await getSuppliers();
+    const pricinglog = await getPricingLogByProductId(typeof id === 'string' ? id : '');
     const statuses = ['in_studio','in_display','in_stock','sold','return'];
 
     return {
-      props: { product, suppliers, statuses }
+      props: { product, suppliers, statuses, pricinglog }
     };
   } catch (error) {
     console.error(error);
@@ -26,7 +28,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 }
 
-export default function Home({product, suppliers, statuses}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Home({product, suppliers, statuses, pricinglog}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
 
   async function handleSubmit(values: {[p: string]: any }) {
@@ -74,6 +76,7 @@ export default function Home({product, suppliers, statuses}: InferGetServerSideP
     <>
       <Page>
         <ProductDataForm initialValues={initialValues} handleSubmit={handleSubmit} statuses={statuses} suppliers={suppliers} handleDelete={() => handleDelete(product.id)} />
+        <ProductPricingLog pricinglog={pricinglog} />
         <style>{`
           .k-input {
             background-color: #ffffff;

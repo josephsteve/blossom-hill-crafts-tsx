@@ -68,20 +68,7 @@ export async function addProduct(product: Product) {
     product.product_id = d[0] + 1; // increment
   }
   return await faunaClient.query(
-    q.Create(q.Collection('products'), {
-      data: {
-        product_id: product.product_id,
-        display_name: product.display_name,
-        description: product?.description,
-        status: product.status,
-        // price_min: product.price_min,
-        // price_max: product.price_max,
-        price_current: product.price_current,
-        // price_sell: product.price_sell,
-        // last_price_change: q.Time(moment(Date.now()).format('yyyy-MM-DDTHH:mm:00Z')),
-        supplier: q.Ref(q.Collection('suppliers'), product.supplier_ref_id)
-      }
-    })
+    q.Call(q.Function('addProduct'), product)
   );
 }
 

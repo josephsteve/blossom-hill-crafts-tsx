@@ -4,11 +4,12 @@ import { Field, FieldRenderProps, Form, FormElement } from '@progress/kendo-reac
 import { Input } from '@progress/kendo-react-inputs';
 import React from 'react';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import { getSupplierById } from '@/utils/Fauna';
+import { getProductsBySupplierId, getSupplierById } from '@/utils/Fauna';
 import Page from '@/components/layout/Page';
 import { Button } from '@progress/kendo-react-buttons';
 import Link from 'next/link';
 import SupplierDataForm from '@/components/SupplierDataForm';
+import SupplierProductsTable from '@/components/SupplierProductsTable';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
@@ -16,8 +17,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const id = context.params.id;
     console.log(id);
     const supplier = await getSupplierById(typeof id === 'string' ? id : '');
+    const products = await getProductsBySupplierId(typeof id === 'string' ? id : '');
     return {
-      props: { supplier },
+      props: { supplier, products },
     };
   } catch (error) {
     console.error(error);
@@ -27,7 +29,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 }
 
-export default function Home({supplier}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Home({supplier, products}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
 
   const supplierIdField = (props: FieldRenderProps) => {
@@ -71,6 +73,7 @@ export default function Home({supplier}: InferGetServerSidePropsType<typeof getS
   return (
     <Page>
       <SupplierDataForm initialValues={supplier} handleSubmit={handleSubmit} handleDelete={() => handleDelete(supplier.id)} />
+      <SupplierProductsTable products={products} />
       <style>{`
           .k-input {
             background-color: #ffffff;

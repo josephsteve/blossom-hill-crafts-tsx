@@ -14,7 +14,7 @@ const AppContext = createContext({
   back_url: ''
 });
 
-export function AppWrapper({children}: {children: any}) {
+export default function AppWrapper({children}: {children: any}) {
   let sharedState: AppGlobalState = defaultState;
 
   return (

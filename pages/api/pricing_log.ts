@@ -9,7 +9,7 @@ export default async (_: NextApiRequest, res: NextApiResponse) => {
   try {
     let id: any = '';
     if (_.query) { id = _.query.id; }
-    console.log(id);
+    //console.log(id);
     const data = await getPricingLogByProductId(id);
     return res.status(200).json(data);
   } catch (err) {

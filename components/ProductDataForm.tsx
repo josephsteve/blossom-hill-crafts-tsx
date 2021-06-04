@@ -6,14 +6,22 @@ import { Button } from '@progress/kendo-react-buttons';
 import { FormInputField } from '@/components/fields/FormInputField';
 import { FormProductStatusField } from '@/components/fields/FormProductStatusField';
 import { FormProductSupplierField } from '@/components/fields/FormProductSupplierField';
+import { useRouter } from 'next/router';
 
-export default function ProductDataForm ({initialValues, handleSubmit, statuses, suppliers, handleDelete}: {initialValues: any, handleSubmit: any, statuses: any, suppliers: any, handleDelete?: any }) {
+export default function ProductDataForm ({initialValues, handleSubmit, statuses, suppliers, handleDelete, back_url}:
+  {initialValues: any, handleSubmit: any, statuses: any, suppliers: any, handleDelete?: any, back_url?: any }) {
   const [deleteConfirm, showDeleteConfirm] = useState(false);
+  const router = useRouter();
 
   const ProductStatusValidator = (value: string) => !value ? 'Product Status is required' : '';
   const ProductNameValidator = (value: string) => !value ? 'Product Name is required' : '';
   const SupplierValidator = (value: any) => !value ? 'Supplier is required' : '';
   const PriceValidator = (value: any) => !value ? 'Price is required' : isNaN(value) ? 'Price should be number' : '';
+
+  function onCancelClicked() {
+    const url = back_url || '/product';
+    router.push(url);
+  }
 
   return (
     <>
@@ -34,7 +42,7 @@ export default function ProductDataForm ({initialValues, handleSubmit, statuses,
             </div>
             <div className="k-form-buttons" style={{ marginTop: '20px' }}>
               <Button primary={true} type={'submit'} disabled={!formRenderProps.allowSubmit}>Save</Button>
-              <Link href="/product"><Button>Cancel</Button></Link>
+              <Button onClick={onCancelClicked}>Cancel</Button>
               {handleDelete && <Button onClick={() => showDeleteConfirm(true)}>Delete</Button>}
             </div>
           </FormElement>

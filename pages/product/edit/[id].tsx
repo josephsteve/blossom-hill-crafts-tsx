@@ -6,12 +6,13 @@ import { getPricingLogByProductId, getProductById, getSuppliers } from '@/utils/
 import ProductDataForm from '@/components/ProductDataForm';
 import { Product } from '@/utils/models';
 import ProductPricingLog from '@/components/ProductPricingLog';
+import { useAppContext } from '../../AppWrapper';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     // @ts-ignore
     const id = context.params.id;
-    console.log(id);
+    //console.log(id);
     const product = await getProductById(typeof id === 'string' ? id : '');
     const suppliers = await getSuppliers();
     const pricinglog = await getPricingLogByProductId(typeof id === 'string' ? id : '');
@@ -30,6 +31,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 export default function Home({product, suppliers, statuses, pricinglog}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
+  const appContext = useAppContext();
+  const back_url = appContext.back_url;
 
   async function handleSubmit(values: {[p: string]: any }) {
     try {
@@ -48,7 +51,8 @@ export default function Home({product, suppliers, statuses, pricinglog}: InferGe
           'Content-Type': 'application/json',
         },
       });
-      await router.push('/product');
+      const url = back_url || '/product';
+      await router.push(url);
     } catch (error) {
       console.error(error);
     }
@@ -62,7 +66,8 @@ export default function Home({product, suppliers, statuses, pricinglog}: InferGe
           'Content-Type': 'application/json',
         },
       });
-      await router.push('/product');
+      const url = back_url || '/product';
+      await router.push(url);
     } catch (error) {
       console.error(error);
     }
@@ -75,7 +80,9 @@ export default function Home({product, suppliers, statuses, pricinglog}: InferGe
   return (
     <>
       <Page>
-        <ProductDataForm initialValues={initialValues} handleSubmit={handleSubmit} statuses={statuses} suppliers={suppliers} handleDelete={() => handleDelete(product.id)} />
+        <h3 style={{ marginInline: 40 }}>Edit Product ({initialValues.display_name})</h3>
+        <ProductDataForm initialValues={initialValues} handleSubmit={handleSubmit} statuses={statuses} suppliers={suppliers} handleDelete={() => handleDelete(product.id)}
+                         back_url={back_url} />
         <ProductPricingLog pricinglog={pricinglog} />
         <style>{`
           .k-input {

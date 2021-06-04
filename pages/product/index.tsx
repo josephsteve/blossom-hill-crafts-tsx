@@ -20,6 +20,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 export default function Product({products}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <Page>
+      <h3>Products</h3>
       <ProductDataTable products={products} />
     </Page>
   );

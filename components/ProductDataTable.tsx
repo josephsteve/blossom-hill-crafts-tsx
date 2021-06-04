@@ -3,8 +3,8 @@ import { Grid, GridCellProps } from '@progress/kendo-react-grid';
 import { GridColumn as Column } from '@progress/kendo-react-grid/dist/npm/GridColumn';
 import { Button } from '@progress/kendo-react-buttons';
 import { Product } from '@/utils/models';
-import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useAppContext } from '../pages/AppWrapper';
 
 const cellStatus = (props: GridCellProps) => {
   const status = props.dataItem.status;
@@ -35,13 +35,21 @@ const EditCommandCell = (props: any) => {
 
 export default function ProductDataTable ({products}: {products: Product[]}) {
   const router = useRouter();
+  const appContext = useAppContext();
 
   const enterEdit = (item: Product) => {
+    appContext.back_url = '';
     router.push(`/product/edit/${item.id}`);
   }
   const MyEditCommandCell = (props: GridCellProps) => (
     <EditCommandCell {...props} enterEdit={enterEdit} />
   );
+
+  function onAddNewProduct() {
+    appContext.selected_supplier = '';
+    appContext.back_url = '';
+    router.push('/product/new');
+  }
 
   return (
     <>
@@ -58,7 +66,7 @@ export default function ProductDataTable ({products}: {products: Product[]}) {
         {/*<Column field="last_price_change" format="{0:MM/dd/yyyy}" title="Last Price Change"/>*/}
         <Column cell={MyEditCommandCell} width={100} />
       </Grid>
-      <Link href="/product/new"><Button primary={true} style={{ marginTop: 15 }}>Add New Product</Button></Link>
+      <Button onClick={onAddNewProduct} primary={true} style={{ marginTop: 15 }}>Add New Product</Button>
     </>
   );
 }

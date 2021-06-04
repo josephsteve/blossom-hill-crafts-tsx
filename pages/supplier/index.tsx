@@ -20,6 +20,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 export default function Supplier({suppliers}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <Page>
+      <h3>Suppliers</h3>
       <SupplierDataTable suppliers={suppliers} />
     </Page>
   );

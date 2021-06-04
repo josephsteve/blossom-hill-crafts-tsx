@@ -9,7 +9,7 @@ export default async (_: NextApiRequest, res: NextApiResponse) => {
   try {
     let status: any = '';
     if (_.query) { status = _.query.status; }
-    console.log(status);
+    //console.log(status);
     const data = await getProductsCount(status);
     return res.status(200).json(data);
   } catch (err) {

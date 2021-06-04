@@ -5,6 +5,7 @@ import Page from '@/components/layout/Page';
 import { getSuppliers } from '@/utils/Fauna';
 import ProductDataForm from '@/components/ProductDataForm';
 import { Product } from '@/utils/models';
+import { useAppContext } from '../AppWrapper';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
@@ -24,6 +25,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 export default function ProductNew({suppliers, statuses}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
+  const appContext = useAppContext();
+  const selected_supplier = appContext.selected_supplier;
+  const back_url = appContext.back_url;
+  console.log('app context from product', '=>', appContext.selected_supplier);
 
   async function handleSubmit(values: {[p: string]: any }) {
     try {
@@ -41,18 +46,22 @@ export default function ProductNew({suppliers, statuses}: InferGetServerSideProp
           'Content-Type': 'application/json',
         },
       });
-      await router.push('/product');
+      const url = back_url || '/product';
+      await router.push(url);
     } catch (error) {
       console.error(error);
     }
   }
 
-  const initialValues = { product_id: '', status: '', display_name: '', description: '', supplier: '', price_current: '' };
+  const initialValues = { product_id: '', status: '', display_name: '', description: '',
+    supplier: selected_supplier || '', price_current: '' };
 
   return (
     <>
       <Page>
-        <ProductDataForm initialValues={initialValues} handleSubmit={handleSubmit} statuses={statuses} suppliers={suppliers} />
+        <h3 style={{ marginInline: 40 }}>Add New Product</h3>
+        <ProductDataForm initialValues={initialValues} handleSubmit={handleSubmit} statuses={statuses} suppliers={suppliers}
+                         back_url={back_url} />
         <style>{`
           .k-input {
             background-color: #ffffff;

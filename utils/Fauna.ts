@@ -143,12 +143,15 @@ export async function getSuppliers() {
   ({data: suppliers} = await faunaClient.query(
     q.Map(
       q.Paginate(q.Documents(q.Collection('suppliers'))),
-      q.Lambda('supplierRef', q.Let(
-        {supplierDoc: q.Get(q.Var('supplierRef'))},
+      q.Lambda('supplierRef', q.Let({
+          supplierDoc: q.Get(q.Var('supplierRef')),
+          productsCount: q.Call(q.Function('getProductsCountBySupplier'), q.Select(['ref', 'id'], q.Var('supplierDoc')))
+        },
         {
           id: q.Select(['ref', 'id'], q.Var('supplierDoc')),
           supplier_id: q.Select(['data', 'supplier_id'], q.Var('supplierDoc')),
-          display_name: q.Select(['data', 'display_name'], q.Var('supplierDoc'))
+          display_name: q.Select(['data', 'display_name'], q.Var('supplierDoc')),
+          products_count: q.Select(['count'], q.Var('productsCount'))
         }
       ))
   )));

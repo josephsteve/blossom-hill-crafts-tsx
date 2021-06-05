@@ -30,6 +30,7 @@ export default function SupplierDataTable ({suppliers}: {suppliers: Supplier[]})
       <Grid data={suppliers}>
         <Column field="supplier_id" title="ID" width={80} />
         <Column field="display_name" title="Supplier Name" />
+        <Column field="products_count" title="# of Products" />
         <Column cell={MyEditCommandCell} />
       </Grid>
       <Link href="/supplier/new"><Button primary={true} style={{ marginTop: 15 }}>Add New Supplier</Button></Link>

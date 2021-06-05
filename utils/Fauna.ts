@@ -90,7 +90,7 @@ export async function updateProduct(product: Product) {
 
 export async function deleteProduct(id: string) {
   return await faunaClient.query(
-    q.Delete(q.Ref(q.Collection('products'), id))
+    q.Call(q.Function('deleteProduct'), id)
   );
 }
 

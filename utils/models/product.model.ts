@@ -14,7 +14,13 @@ export interface Product {
 }
 
 export interface PricingLog {
-  product_ref_id: string; // Ref(Collection("products"), "300132873901441545")
+  product_log_ref_id: string; // Ref(Collection("products"), "300132873901441545")
   price: number;
+  log_date: string;
+}
+
+export interface StatusLog {
+  status_log_ref_id: string; // Ref(Collection("products"), "300132873901441545")
+  status: string;
   log_date: string;
 }

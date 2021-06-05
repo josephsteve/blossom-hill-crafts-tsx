@@ -2,11 +2,12 @@ import React from 'react';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { useRouter } from 'next/router';
 import Page from '@/components/layout/Page';
-import { getPricingLogByProductId, getProductById, getSuppliers } from '@/utils/Fauna';
+import { getPricingLogByProductId, getProductById, getStatusLogByProductId, getSuppliers } from '@/utils/Fauna';
 import ProductDataForm from '@/components/ProductDataForm';
 import { Product } from '@/utils/models';
 import ProductPricingLog from '@/components/ProductPricingLog';
 import { useAppContext } from '../../AppWrapper';
+import StatusPricingLog from '@/components/StatusPricingLog';
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
@@ -16,10 +17,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const product = await getProductById(typeof id === 'string' ? id : '');
     const suppliers = await getSuppliers();
     const pricinglog = await getPricingLogByProductId(typeof id === 'string' ? id : '');
+    const statuslog = await getStatusLogByProductId(typeof id === 'string' ? id : '');
     const statuses = ['in_studio','in_display','in_stock','sold','return'];
 
     return {
-      props: { product, suppliers, statuses, pricinglog }
+      props: { product, suppliers, statuses, pricinglog, statuslog }
     };
   } catch (error) {
     console.error(error);
@@ -29,7 +31,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 }
 
-export default function Home({product, suppliers, statuses, pricinglog}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Home({product, suppliers, statuses, pricinglog, statuslog}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const router = useRouter();
   const appContext = useAppContext();
   const back_url = appContext.back_url;
@@ -83,7 +85,10 @@ export default function Home({product, suppliers, statuses, pricinglog}: InferGe
         <h3 style={{ marginInline: 40 }}>Edit Product ({initialValues.display_name})</h3>
         <ProductDataForm initialValues={initialValues} handleSubmit={handleSubmit} statuses={statuses} suppliers={suppliers} handleDelete={() => handleDelete(product.id)}
                          back_url={back_url} />
-        <ProductPricingLog pricinglog={pricinglog} />
+        <div style={{ flexDirection: 'row', display: 'inline-flex', marginInline: 40, marginTop: 40, justifyContent: 'space-between' }}>
+          <StatusPricingLog statuslog={statuslog} />
+          <ProductPricingLog pricinglog={pricinglog} />
+        </div>
         <style>{`
           .k-input {
             background-color: #ffffff;

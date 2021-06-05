@@ -100,7 +100,7 @@ export async function getPricingLogByProductId(id: string) {
       q.Lambda('pricingRef', q.Let({
         pricingDoc: q.Get(q.Var('pricingRef'))
       }, {
-        product_ref_id: q.Select(['ref', 'id'], q.Var('pricingDoc')),
+        product_log_ref_id: q.Select(['ref', 'id'], q.Var('pricingDoc')),
         price: q.Select(['data', 'price'], q.Var('pricingDoc')),
         log_date: q.ToString(q.Select(['data', 'log_date'], q.Var('pricingDoc')))
       }))
@@ -114,6 +114,28 @@ export async function getPricingLogByProductId(id: string) {
   });
 
   return pricinglogs;
+}
+
+export async function getStatusLogByProductId(id: string) {
+  const data: any = await faunaClient.query(
+    q.Map(q.Paginate(q.Match(q.Index('status_log_by_product'), q.Ref(q.Collection('products'), id))),
+      q.Lambda('statusRef', q.Let({
+        statusDoc: q.Get(q.Var('statusRef'))
+      }, {
+        status_log_ref_id: q.Select(['ref', 'id'], q.Var('statusDoc')),
+        status: q.Select(['data', 'status'], q.Var('statusDoc')),
+        log_date: q.ToString(q.Select(['data', 'log_date'], q.Var('statusDoc')))
+      }))
+    )
+  );
+
+  const statuslogs = data.data.map((log: any) => {
+    const dt = moment(log.log_date);
+    log.log_date = dt.format('MM/DD/yyyy h:mmA');
+    return log;
+  });
+
+  return statuslogs;
 }
 
 export async function getSuppliers() {

@@ -12,11 +12,11 @@ export default function ProductPricingLog ({pricinglog}: {pricinglog: PricingLog
   }
 
   return (
-    <>
-      <Grid data={pricinglog} style={{ marginInline: 40, marginTop: 40 }}>
+    <div>
+      <Grid data={pricinglog} style={{ marginInlineStart: 10 }}>
         <Column field="log_date" title="Log Date" />
         <Column field="price" title="Price" cell={cellPrice} />
       </Grid>
-    </>
+    </div>
   );
 }

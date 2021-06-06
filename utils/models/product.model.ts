@@ -4,8 +4,8 @@ export interface Product {
   display_name: string;
   description?: string;
   status: string; // "in_studio", "in_stock", "in_display", "sold", "return"
-  price_min?: number;
-  price_max?: number;
+  price_min?: number; // TODO: calculate price minimum from pricing_log
+  price_max?: number; // TODO: calculate price maximum from pricing_log
   price_current: number;
   price_sell?: number;
   last_price_change?: string;

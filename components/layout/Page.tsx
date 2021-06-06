@@ -17,6 +17,7 @@ export default function Page(props: PageProps) {
             background: white;
             padding: 25px 10px;
             margin-top: 1px;
+            padding-inline: 40px;
         }
         .page-content.sticky {
             padding: 25px 10px;

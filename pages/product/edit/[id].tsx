@@ -82,10 +82,10 @@ export default function Home({product, suppliers, statuses, pricinglog, statuslo
   return (
     <>
       <Page>
-        <h3 style={{ marginInline: 40 }}>Edit Product ({initialValues.display_name})</h3>
+        <h3>Edit Product ({initialValues.display_name})</h3>
         <ProductDataForm initialValues={initialValues} handleSubmit={handleSubmit} statuses={statuses} suppliers={suppliers} handleDelete={() => handleDelete(product.id)}
                          back_url={back_url} />
-        <div style={{ flexDirection: 'row', display: 'inline-flex', marginInline: 40, marginTop: 40, justifyContent: 'space-between' }}>
+        <div style={{ flexDirection: 'row', display: 'inline-flex', marginTop: 40, justifyContent: 'space-between' }}>
           <StatusPricingLog statuslog={statuslog} />
           <ProductPricingLog pricinglog={pricinglog} />
         </div>

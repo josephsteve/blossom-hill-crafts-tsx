@@ -36,7 +36,7 @@ export default function SupplierProductsTable ({products, supplier_ref_id}: {pro
 
   return (
     <>
-      <Grid data={products} style={{ marginInline: 40, marginTop: 40 }}>
+      <Grid data={products} style={{ marginTop: 40 }}>
         <Column field="product_id" title="ID" width={90} />
         <Column field="display_name" title="Product Name" />
         <Column field="description" title="Description" />

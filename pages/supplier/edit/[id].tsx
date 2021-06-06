@@ -69,11 +69,11 @@ export default function Home({supplier, products}: InferGetServerSidePropsType<t
 
   return (
     <Page>
-      <h3 style={{ marginInline: 40 }}>Edit Supplier ({supplier.display_name})</h3>
+      <h3>Edit Supplier ({supplier.display_name})</h3>
       <SupplierDataForm initialValues={supplier} handleSubmit={handleSubmit} handleDelete={() => handleDelete(supplier.id)}
                         productsCount={supplier.products_count} />
       <SupplierProductsTable products={products} supplier_ref_id={supplier.id} />
-      <Button onClick={onAddNewProduct} primary={true} style={{ marginInline: 40, marginTop: 15 }}>Add New Product</Button>
+      <Button onClick={onAddNewProduct} primary={true} style={{ marginTop: 15 }}>Add New Product</Button>
       <style>{`
           .k-input {
             background-color: #ffffff;

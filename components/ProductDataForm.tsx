@@ -27,7 +27,7 @@ export default function ProductDataForm ({initialValues, handleSubmit, statuses,
     <>
       <Form initialValues={initialValues} onSubmit={handleSubmit}
         render={(formRenderProps) => (
-          <FormElement style={{ marginInline: 40 }}>
+          <FormElement>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <Field id={'product_id'} name={'product_id'} component={FormInputField} disabled={true} label={'Product Id'} placeholder={'Product Id (AutoIncrement)'} wrapperStyle={{ width: '100%', marginRight: '18px' }}/>
               <Field id={'status_id'} name={'status'} component={FormProductStatusField} statuses={statuses} label={'Product Status'} validator={ProductStatusValidator} wrapperStyle={{ width: '100%' }}/>

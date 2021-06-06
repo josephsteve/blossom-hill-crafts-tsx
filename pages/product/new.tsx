@@ -59,7 +59,7 @@ export default function ProductNew({suppliers, statuses}: InferGetServerSideProp
   return (
     <>
       <Page>
-        <h3 style={{ marginInline: 40 }}>Add New Product</h3>
+        <h3>Add New Product</h3>
         <ProductDataForm initialValues={initialValues} handleSubmit={handleSubmit} statuses={statuses} suppliers={suppliers}
                          back_url={back_url} />
         <style>{`

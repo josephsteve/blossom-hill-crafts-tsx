@@ -18,6 +18,7 @@ export default function Header() {
         <AppBarSpacer style={{ width: 32 }} />
         <AppBarSection>
           <ul>
+            <li><Link href="/cart">Cart</Link></li>
             <li><Link href="/product">Products</Link></li>
             <li><Link href="/supplier">Suppliers</Link></li>
           </ul>

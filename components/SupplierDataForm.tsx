@@ -6,8 +6,10 @@ import React, { useState } from 'react';
 import { FormInputField } from '@/components/fields/FormInputField';
 import { Dialog, DialogActionsBar } from '@progress/kendo-react-dialogs';
 
-export default function SupplierDataForm ({initialValues, handleSubmit, handleDelete}: {initialValues: any, handleSubmit: any, handleDelete?: any}) {
+export default function SupplierDataForm ({initialValues, handleSubmit, handleDelete, productsCount}:
+  {initialValues: any, handleSubmit: any, handleDelete?: any, productsCount?: number}) {
   const [deleteConfirm, showDeleteConfirm] = useState(false);
+  const [cannotDelete, showCannotDelete] = useState(false);
 
   const SupplierNameValidator = (value: string) => !value ? 'Supplier Name is required' : '';
 
@@ -25,7 +27,7 @@ export default function SupplierDataForm ({initialValues, handleSubmit, handleDe
             <div className="k-form-buttons">
               <Button primary={true} type={'submit'} disabled={!formRenderProps.allowSubmit}>Save</Button>
               <Link href="/supplier"><Button>Cancel</Button></Link>
-              {handleDelete && <Button onClick={() => showDeleteConfirm(true)}>Delete</Button>}
+              {handleDelete && <Button onClick={() => (productsCount || 0 > 0 ? showCannotDelete(true) : showDeleteConfirm(true))}>Delete</Button>}
             </div>
           </FormElement>
         )} />
@@ -35,6 +37,14 @@ export default function SupplierDataForm ({initialValues, handleSubmit, handleDe
           <DialogActionsBar>
               <button className={'k-button'} onClick={() => showDeleteConfirm(false)}>No</button>
               <button className={'k-button'} onClick={handleDelete}>Yes</button>
+          </DialogActionsBar>
+      </Dialog>}
+      {cannotDelete &&
+      <Dialog title={'Supplier has products'} onClose={() => showCannotDelete(false)}>
+          <p style={{textAlign:'center'}}>Cannot delete supplier with products.</p>
+          <p style={{textAlign:'center'}}>Delete all the products of this supplier first</p>
+          <DialogActionsBar>
+              <button className={'k-button'} onClick={() => showCannotDelete(false)}>Ok</button>
           </DialogActionsBar>
       </Dialog>}
     </>

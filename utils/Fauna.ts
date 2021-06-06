@@ -161,14 +161,17 @@ export async function getSuppliers() {
 
 export async function getSupplierById(id: string) {
   const data: any = await faunaClient.query(
-    q.Get(q.Ref(q.Collection('suppliers'), id))
+    q.Let({
+      supplierDoc: q.Get(q.Ref(q.Collection('suppliers'), id)),
+      productsCount: q.Call(q.Function('getProductsCountBySupplier'), id)
+      }, {
+        id: q.Select(['ref', 'id'], q.Var('supplierDoc')),
+        supplier_id: q.Select(['data', 'supplier_id'], q.Var('supplierDoc')),
+        display_name: q.Select(['data', 'display_name'], q.Var('supplierDoc')),
+        products_count: q.Select(['count'], q.Var('productsCount'))
+    })
   );
-  const supplier: Supplier = {
-    id: data.ref.id,
-    supplier_id: data.data.supplier_id,
-    display_name: data.data.display_name
-  };
-  return supplier;
+  return data;
 }
 
 export async function addSupplier(supplier: Supplier) {

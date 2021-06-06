@@ -39,7 +39,7 @@ export default function SupplierNew() {
 
   return (
     <Page>
-      <h3 style={{ marginInline: 40 }}>Add New Supplier</h3>
+      <h3>Add New Supplier</h3>
       <SupplierDataForm initialValues={initialValues} handleSubmit={handleSubmit} />
       <style>{`
           .k-input {

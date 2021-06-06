@@ -17,7 +17,7 @@ export default function SupplierDataForm ({initialValues, handleSubmit, handleDe
     <>
       <Form initialValues={initialValues} onSubmit={handleSubmit}
         render={(formRenderProps) => (
-          <FormElement style={{ marginInline: 40 }}>
+          <FormElement>
             <div className="k-mb-3">
               <Field id={'supplier_id_edit'} name={'supplier_id'} component={FormInputField} disabled={true} placeholder={'Supplier Id (AutoIncrement)'} wrapperStyle={{ width: '100%', marginRight: '18px' }}/>
             </div>

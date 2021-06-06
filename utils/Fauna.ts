@@ -51,6 +51,16 @@ export async function getProductById(id: string) {
   return data;
 }
 
+export async function getProductByProductId(product_id: number) {
+  let products: Product[];
+  ({data: products} = await faunaClient.query(
+    q.Map(q.Paginate(q.Match(q.Index('products_by_product_id'), product_id)),
+      productLambda()
+    )));
+
+  return products;
+}
+
 export async function getProductsBySupplierId(id: string) {
   let products: Product[];
   ({data: products} = await faunaClient.query(

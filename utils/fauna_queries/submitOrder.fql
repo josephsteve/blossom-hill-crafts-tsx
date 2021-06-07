@@ -23,34 +23,55 @@ Query(
           Var("cart_details"),
           Lambda(
             "detail",
-            Create(Collection("transaction_details"), {
-              data: {
-                transaction: Ref(
-                  Collection("transactions"),
-                  Var("newTransData")
-                ),
-                product: Ref(
-                  Collection("products"),
-                  Select(["product_ref_id"], Var("detail"))
-                ),
-                product_id: Select(["product_id"], Var("detail")),
-                product_display_name: Select(
-                  ["product_display_name"],
-                  Var("detail")
-                ),
-                product_description: Select(
-                  ["product_description"],
-                  Var("detail")
-                ),
-                price_current: Select(["price_current"], Var("detail")),
-                price_sell: Select(["price_sell"], Var("detail")),
-                supplier: Ref(
-                  Collection("suppliers"),
-                  Select(["supplier_ref_id"], Var("detail"))
-                ),
-                supplier_name: Select(["supplier_name"], Var("detail"))
-              }
-            })
+            Let({
+              product_ref_id: Select(["product_ref_id"], Var("detail")),
+              price_existing: Select(["data", "price_current"], Get(Ref(Collection("products"), Var("product_ref_id")))),
+              price_current: Select(["price_current"], Var("detail"))
+            },
+            Do(
+              If(
+                Not(Equals(Var("price_existing"), Var("price_current"))),
+                Create(Collection("pricing_log"), {
+                  data: {
+                    product: Ref(Collection("products"), Var("product_ref_id")),
+                    price: Select(["price_current"], Var("detail")),
+                    log_date: Now()
+                  }
+                }),
+                null
+              ),
+              Create(Collection("transaction_details"), {
+                data: {
+                  transaction: Ref(
+                    Collection("transactions"),
+                    Var("newTransData")
+                  ),
+                  product: Ref(Collection("products"), Var("product_ref_id")),
+                  product_id: Select(["product_id"], Var("detail")),
+                  product_display_name: Select(
+                    ["product_display_name"],
+                    Var("detail")
+                  ),
+                  product_description: Select(
+                    ["product_description"],
+                    Var("detail")
+                  ),
+                  price_current: Var("price_existing"),
+                  price_sell: Select(["price_sell"], Var("detail")),
+                  supplier: Ref(
+                    Collection("suppliers"),
+                    Select(["supplier_ref_id"], Var("detail"))
+                  ),
+                  supplier_name: Select(["supplier_name"], Var("detail"))
+                }
+              }),
+              Update(Ref(Collection("products"), Var("product_ref_id")), {
+                data: {
+                  status: "sold",
+                }
+              })
+            )
+            )            
           )
         )
       )

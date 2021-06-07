@@ -9,8 +9,10 @@ import CartDetailDataTable from '@/components/CartDetailDataTable';
 import { filterBy } from '@progress/kendo-data-query';
 import { Transaction, TransactionDetail } from '@/utils/models/transaction.model';
 import moment from 'moment';
+import { useRouter } from 'next/router';
 
 export default function Home() {
+  const router = useRouter();
   const [productSearch, resetSearch] = useState({ product_id: '' });
 
   const [cartTotal, setCartTotal] = useState({
@@ -123,8 +125,8 @@ export default function Home() {
       body: JSON.stringify(data),
       headers: new Headers({'Content-Type': 'application/json'})
     });
-
-    console.log('response', '=>', response);
+    router.push('/transaction');
+    console.log('response', '=>', await response.json());
   }
 
   return (

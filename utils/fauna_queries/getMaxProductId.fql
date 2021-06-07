@@ -1,0 +1,21 @@
+Query(
+  Lambda(
+    "x",
+    If(
+      Exists(Documents(Collection("products"))),
+      Max(
+        Map(
+          Paginate(Documents(Collection("products"))),
+          Lambda(
+            "ref",
+            Let(
+              { doc: Get(Var("ref")) },
+              { product_id: Select(["data", "product_id"], Var("doc")) }
+            )
+          )
+        )
+      ),
+      { data: [{ product_id: 1000 }] }
+    )
+  )
+)

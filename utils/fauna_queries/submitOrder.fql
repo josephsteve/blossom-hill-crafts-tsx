@@ -3,17 +3,20 @@ Query(
     ["cart_total", "cart_details"],
     Let(
       {
-        newTransData: Select(["ref", "id"], Create(Collection("transactions"), {
-          data: {
-            trans_date: Select(["trans_date"], Var("cart_total")),
-            transaction_date: Now(),
-            total_items: Select(["total_items"], Var("cart_total")),
-            detail_total: Select(["detail_total"], Var("cart_total")),
-            tax_rate: Select(["tax_rate"], Var("cart_total")),
-            tax_amount: Select(["tax_amount"], Var("cart_total")),
-            total_price: Select(["total_price"], Var("cart_total"))
-          }
-        }))
+        newTransData: Select(
+          ["ref", "id"],
+          Create(Collection("transactions"), {
+            data: {
+              trans_date: Select(["trans_date"], Var("cart_total")),
+              transaction_date: Now(),
+              total_items: Select(["total_items"], Var("cart_total")),
+              detail_total: Select(["detail_total"], Var("cart_total")),
+              tax_rate: Select(["tax_rate"], Var("cart_total")),
+              tax_amount: Select(["tax_amount"], Var("cart_total")),
+              total_price: Select(["total_price"], Var("cart_total"))
+            }
+          })
+        )
       },
       Do(
         Foreach(

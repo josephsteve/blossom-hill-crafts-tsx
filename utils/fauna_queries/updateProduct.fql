@@ -1,0 +1,57 @@
+Query(
+  Lambda(
+    "product",
+    Let(
+      {
+        product_ref_id: Select(["id"], Var("product")),
+        price_existing: Select(
+          ["data", "price_current"],
+          Get(Ref(Collection("products"), Var("product_ref_id")))
+        ),
+        price_current: Select(["price_current"], Var("product")),
+        status_existing: Select(
+          ["data", "status"],
+          Get(Ref(Collection("products"), Var("product_ref_id")))
+        ),
+        status: Select(["status"], Var("product"))
+      },
+      Do(
+        If(
+          Not(Equals(Var("price_existing"), Var("price_current"))),
+          Create(Collection("pricing_log"), {
+            data: {
+              product: Ref(Collection("products"), Var("product_ref_id")),
+              price: Select(["price_current"], Var("product")),
+              log_date: Now()
+            }
+          }),
+          null
+        ),
+        If(
+          Not(Equals(Var("status_existing"), Var("status"))),
+          Create(Collection("status_log"), {
+            data: {
+              product: Ref(Collection("products"), Var("product_ref_id")),
+              status: Select(["status"], Var("product")),
+              log_date: Now()
+            }
+          }),
+          null
+        ),
+        Update(Ref(Collection("products"), Var("product_ref_id")), {
+          data: {
+            product_id: Select(["product_id"], Var("product")),
+            display_name: Select(["display_name"], Var("product")),
+            description: Select(["description"], Var("product")),
+            status: Select(["status"], Var("product")),
+            price_current: Select(["price_current"], Var("product")),
+            supplier: Ref(
+              Collection("suppliers"),
+              Select(["supplier_ref_id"], Var("product"))
+            )
+          }
+        })
+      )
+    )
+  )
+)

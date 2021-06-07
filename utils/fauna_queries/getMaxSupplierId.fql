@@ -1,0 +1,21 @@
+Query(
+  Lambda(
+    "x",
+    If(
+      Exists(Documents(Collection("suppliers"))),
+      Max(
+        Map(
+          Paginate(Documents(Collection("suppliers"))),
+          Lambda(
+            "ref",
+            Let(
+              { doc: Get(Var("ref")) },
+              { supplier_id: Select(["data", "supplier_id"], Var("doc")) }
+            )
+          )
+        )
+      ),
+      { data: [{ supplier_id: 200 }] }
+    )
+  )
+)

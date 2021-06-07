@@ -1,6 +1,7 @@
 import * as faunadb from 'faunadb';
 import { Product, Supplier } from './models';
 import moment from 'moment';
+import { Transaction, TransactionDetail } from '@/utils/models/transaction.model';
 
 const faunaClient = new faunadb.Client({ secret: process.env.FAUNA_SECRET });
 const q = faunadb.query;
@@ -214,4 +215,37 @@ export async function deleteSupplier(id: string) {
   return await faunaClient.query(
     q.Delete(q.Ref(q.Collection('suppliers'), id))
   );
+}
+
+export async function cartPayNow(cart_total: Transaction, cart_details: TransactionDetail[]) {
+  return await faunaClient.query(
+    q.Call(q.Function('submitOrder'), [cart_total, cart_details])
+  );
+}
+
+export async function getTransactions() {
+  let transactions: Transaction[];
+  ({data: transactions} = await faunaClient.query(
+    q.Map(
+      q.Paginate(q.Documents(q.Collection('transactions'))),
+      q.Lambda('transRef', q.Let({
+        transDoc: q.Get(q.Var('transRef'))
+      }, {
+        id: q.Select(['ref', 'id'], q.Var('transDoc')),
+        trans_date: q.Select(['data', 'trans_date'], q.Var('transDoc')),
+        total_items: q.Select(['data', 'total_items'], q.Var('transDoc')),
+        detail_total: q.Select(['data', 'detail_total'], q.Var('transDoc')),
+        tax_rate: q.Select(['data', 'tax_rate'], q.Var('transDoc')),
+        tax_amount: q.Select(['data', 'tax_amount'], q.Var('transDoc')),
+        total_price: q.Select(['data', 'total_price'], q.Var('transDoc')),
+        transaction_date: q.ToString(q.Select(['data', 'transaction_date'], q.Var('transDoc')))
+      }))
+    )
+  ));
+  const transdata = transactions.map((t: any) => {
+    const dt = moment(t.transaction_date);
+    t.transaction_date = dt.format('MM/DD/yyyy h:mmA');
+    return t;
+  });
+  return transdata;
 }

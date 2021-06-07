@@ -1,0 +1,14 @@
+Query(
+  Lambda(
+    "supplier_ref_id",
+    Let(
+      {
+        products: Match(
+          Index("products_by_supplier"),
+          Ref(Collection("suppliers"), Var("supplier_ref_id"))
+        )
+      },
+      { count: Count(Var("products")) }
+    )
+  )
+)

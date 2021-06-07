@@ -7,8 +7,12 @@ import CartSearchProductTable from '@/components/CartSearchProductTable';
 import CartTotalDataTable from '@/components/CartTotalDataTable';
 import CartDetailDataTable from '@/components/CartDetailDataTable';
 import { filterBy } from '@progress/kendo-data-query';
+import { Transaction, TransactionDetail } from '@/utils/models/transaction.model';
+import moment from 'moment';
+import { useRouter } from 'next/router';
 
 export default function Home() {
+  const router = useRouter();
   const [productSearch, resetSearch] = useState({ product_id: '' });
 
   const [cartTotal, setCartTotal] = useState({
@@ -27,6 +31,18 @@ export default function Home() {
 
   const productIdValidator = (value: any) => !value ? 'Enter Product Id' : isNaN(value) ? 'Product Id should be a number' : '';
 
+  const calculateTotal = (amount: number) => {
+    const detail_total = cartTotal.detail_total + amount;
+    const tax_amount = Number((detail_total * 0.0925).toFixed(2));
+    const total_price = detail_total + tax_amount;
+    const total_items = cartTotal.total_items + (amount >= 0 ? 1 : -1);
+    setCartTotal(prevState => ({...prevState, total_items, detail_total, tax_amount, total_price }));
+
+    setShowProductAlreadyInCart(false);
+    setShowSearchProductTable(false);
+    resetSearch({ product_id: '' });
+  }
+
   const handleAddToCart = (dataItem: any) => {
     const filtered = filterBy(cartproducts, { logic: 'and', filters: [{field:'id', operator:'eq', value:dataItem.id}]});
     if (!filtered || filtered.length === 0) {
@@ -35,15 +51,7 @@ export default function Home() {
 
       setShowSearchProductTable(false);
       const amount = dataItem.price_current;
-      const subtotal = cartTotal.detail_total + amount;
-      const total_items = cartTotal.total_items + 1;
-      setCartTotal(prevState => ({...prevState,
-        total_items: total_items,
-        detail_total: subtotal,
-        tax_amount: subtotal * 0.0925,
-        total_price: subtotal + (subtotal * 0.0925)
-      }));
-      resetSearch({ product_id: '' });
+      calculateTotal(amount);
     } else {
       setShowProductAlreadyInCart(true);
       setShowSearchProductTable(false);
@@ -51,8 +59,6 @@ export default function Home() {
   }
 
   const onDeleteItem = (dataItem: any) => {
-    console.log(dataItem);
-
     // @ts-ignore
     addCartProduct(prevState => {
       let newdata = filterBy(prevState, { logic: 'and', filters: [{ field: 'id', operator: 'neq', value: dataItem.id }]});
@@ -61,14 +67,7 @@ export default function Home() {
     });
 
     const amount = dataItem.price_current;
-    const subtotal = cartTotal.detail_total - amount;
-    const total_items = cartTotal.total_items - 1;
-    setCartTotal(prevState => ({...prevState,
-      total_items: total_items,
-      detail_total: subtotal,
-      tax_amount: subtotal * 0.0925,
-      total_price: subtotal + (subtotal * 0.0925)
-    }));
+    calculateTotal(-amount);
   }
 
   async function onSearchClick(values: {[p: string]: any }) {
@@ -98,6 +97,38 @@ export default function Home() {
     resetSearch({ product_id: '' });
   }
 
+  const onPayNow = async () => {
+    const cart_total: Transaction = {
+      trans_date: moment().format('yyyy-MM-DD'),
+      total_items: cartTotal.total_items,
+      detail_total: cartTotal.detail_total,
+      tax_rate: cartTotal.tax_rate,
+      tax_amount: cartTotal.tax_amount,
+      total_price: cartTotal.total_price
+    };
+    const cart_details: TransactionDetail[] = cartproducts.map((p: any) => {
+      return {
+        product_ref_id: p.id,
+        product_id: p.product_id,
+        product_display_name: p.display_name,
+        product_description: p.description,
+        price_current: p.price_current,
+        price_sell: p.price_current, // TODO: get the price sell vs current
+        supplier_ref_id: p.supplier_ref_id,
+        supplier_name: p.supplier_name
+      };
+    });
+    const data = {cart_total, cart_details};
+
+    const response = await fetch('api/cart_pay_now', {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: new Headers({'Content-Type': 'application/json'})
+    });
+    router.push('/transaction');
+    console.log('response', '=>', await response.json());
+  }
+
   return (
     <Page>
       <h3>Cart</h3>
@@ -114,11 +145,11 @@ export default function Home() {
               </fieldset>
             </FormElement>} />
         </div>
-        <CartTotalDataTable cart={cartTotal} onPayClick={() => null} />
+        <CartTotalDataTable cart={cartTotal} onPayClick={onPayNow} />
       </div>
       {showSearchProductTable && <CartSearchProductTable products={products} onAddToCart={handleAddToCart} onSearchClose={onSearchClose}/>}
-      {showProductNotFound && <div style={{ marginTop: 20, marginInlineStart: 30 }}>Product Not Found</div>}
-      {showProductAlreadyInCart && <div style={{ marginTop: 20, marginInlineStart: 30 }}>Product Already In Cart</div>}
+      {showProductNotFound && <div style={{ marginTop: 20, textAlign: 'center', fontWeight: 'bold', color: 'red' }}>Product Not Found</div>}
+      {showProductAlreadyInCart && <div style={{ marginTop: 20, textAlign: 'center', fontWeight: 'bold', color: 'red' }}>Product Already In Cart</div>}
       <CartDetailDataTable cartproducts={cartproducts} onDeleteItem={onDeleteItem} />
     </Page>
   );

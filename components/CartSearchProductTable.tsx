@@ -13,7 +13,7 @@ const cellPriceCurrent = (props: GridCellProps) => {
 const AddToCartCommandCell = (props: any) => {
   return (
     <td>
-      <Button primary={true} onClick={() => props.onAddToCart(props.dataItem)}>Add</Button>
+      <Button primary={true} disabled={props.dataItem.status === 'sold'} onClick={() => props.onAddToCart(props.dataItem)}>Add</Button>
       <Button onClick={props.onSearchClose} style={{ marginInlineStart: 10 }}>Close</Button>
     </td>
   );
@@ -25,6 +25,10 @@ export default function CartSearchProductTable({products, onAddToCart, onSearchC
   const AddToCartCommand = (props: GridCellProps) => (
     <AddToCartCommandCell {...props} onAddToCart={onAddToCart} onSearchClose={onSearchClose} />
   );
+
+  const statusCell = (props: GridCellProps) => {
+    return (<td><span style={props.dataItem.status === 'sold' ? { fontWeight: 'bold', color: 'red' } : {}}>{props.dataItem.status}</span></td>);
+  }
 
   const inEditProducts = products.map(item => ({ ...item, inEdit: true }));
 
@@ -48,7 +52,7 @@ export default function CartSearchProductTable({products, onAddToCart, onSearchC
         <Column field="display_name" title="Product Name" editable={false} />
         <Column field="description" title="Description" editable={false} />
         <Column field="supplier_name" title="Supplier Name" editable={false} />
-        <Column field="status" title="Status" editable={false} />
+        <Column field="status" title="Status" editable={false} cell={statusCell} />
         {/*<Column field="price_min" format="{0: $#,##.00}" title="Price Min" />
         <Column field="price_max" format="{0: $#,##.00}" title="Price Max" />
         <Column field="price_sell" format="{0: $#,##.00}" title="Price Sell" />*/}

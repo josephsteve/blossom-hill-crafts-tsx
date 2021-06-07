@@ -1,0 +1,28 @@
+Query(
+  Lambda(
+    "product_ref_id",
+    Let(
+      {
+        price_logs: Paginate(
+          Match(
+            Index("pricing_log_by_product"),
+            Ref(Collection("products"), Var("product_ref_id"))
+          )
+        ),
+        price_logs_refs: Select(["data"], Var("price_logs")),
+        status_logs: Paginate(
+          Match(
+            Index("status_log_by_product"),
+            Ref(Collection("products"), Var("product_ref_id"))
+          )
+        ),
+        status_logs_refs: Select(["data"], Var("status_logs"))
+      },
+      Do(
+        Foreach(Var("price_logs_refs"), Lambda("log", Delete(Var("log")))),
+        Foreach(Var("status_logs_refs"), Lambda("log", Delete(Var("log")))),
+        Delete(Ref(Collection("products"), Var("product_ref_id")))
+      )
+    )
+  )
+)

@@ -1,0 +1,41 @@
+Query(
+  Lambda(
+    "product",
+    Let(
+      {
+        newProductId: Select(
+          ["ref", "id"],
+          Create(Collection("products"), {
+            data: {
+              product_id: Select(["product_id"], Var("product")),
+              display_name: Select(["display_name"], Var("product")),
+              description: Select(["description"], Var("product")),
+              status: Select(["status"], Var("product")),
+              price_current: Select(["price_current"], Var("product")),
+              supplier: Ref(
+                Collection("suppliers"),
+                Select(["supplier_ref_id"], Var("product"))
+              )
+            }
+          })
+        )
+      },
+      Do(
+        Create(Collection("pricing_log"), {
+          data: {
+            product: Ref(Collection("products"), Var("newProductId")),
+            price: Select(["price_current"], Var("product")),
+            log_date: Now()
+          }
+        }),
+        Create(Collection("status_log"), {
+          data: {
+            product: Ref(Collection("products"), Var("newProductId")),
+            status: Select(["status"], Var("product")),
+            log_date: Now()
+          }
+        })
+      )
+    )
+  )
+)

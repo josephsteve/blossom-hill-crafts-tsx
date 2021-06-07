@@ -1,6 +1,7 @@
 import * as faunadb from 'faunadb';
 import { Product, Supplier } from './models';
 import moment from 'moment';
+import { Transaction, TransactionDetail } from '@/utils/models/transaction.model';
 
 const faunaClient = new faunadb.Client({ secret: process.env.FAUNA_SECRET });
 const q = faunadb.query;
@@ -213,5 +214,11 @@ export async function updateSupplier(supplier: Supplier) {
 export async function deleteSupplier(id: string) {
   return await faunaClient.query(
     q.Delete(q.Ref(q.Collection('suppliers'), id))
+  );
+}
+
+export async function cartPayNow(cart_total: Transaction, cart_details: TransactionDetail[]) {
+  return await faunaClient.query(
+    q.Call(q.Function('submitOrder'), [cart_total, cart_details])
   );
 }

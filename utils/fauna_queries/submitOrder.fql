@@ -73,7 +73,10 @@ Query(
             )
             )            
           )
-        )
+        ),
+        {
+          data: Var("newTransData")
+        }
       )
     )
   )

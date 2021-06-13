@@ -1,0 +1,2 @@
+ Map(Paginate(Match(Index("transactions_by_date"))), 
+    Lambda(["transaction_date", "ref"], Get(Var("ref"))))

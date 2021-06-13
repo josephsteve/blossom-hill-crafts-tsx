@@ -1,0 +1,17 @@
+CreateIndex(
+    {
+        name: "transactions_by_date",
+        unique: false,
+        serialized: true,
+        source: Collection("transactions"),
+        values: [
+            {
+                field: ["data", "transaction_date"],
+                reverse: true
+            }, 
+            {
+                field: ["ref"]
+            }
+        ]
+    }  
+)

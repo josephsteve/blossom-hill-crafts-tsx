@@ -18,7 +18,7 @@ export default function TransactionsDataTable ({transactions}: {transactions: Tr
     <>
       <Grid data={transactions}>
         <Column field="id" title="Id" width={230} cell={refIdCell} />
-        <Column field="transaction_date" width={200} title="Transaction Date" />
+        <Column field="transaction_date" width={200} title="Transaction Date" cell={TableCellTransactionFields} />
         <Column field="total_items" title="Total Items" cell={TableCellTransactionFields} />
         <Column field="detail_total" title="SubTotal" cell={TableCellTransactionFields} />
         <Column field="tax_rate" title="Tax Rate" cell={TableCellTransactionFields} />

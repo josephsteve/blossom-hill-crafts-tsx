@@ -17,7 +17,7 @@ export default function TableCellTransactionFields (props: GridCellProps) {
     case 'total_items':
       return <td style={{ textAlign: 'center' }}>{dataItem.total_items}</td>
     case 'transaction_date':
-      const dt = moment(dataItem.transaction_date);
+      const dt = moment.utc(dataItem.transaction_date);
       return <td>{dt.local().format('MM/DD/yyyy h:mmA')}</td>
     case 'price_current':
       return <td style={{ textAlign: 'right' }}>{formatter.format(dataItem.price_current)}</td>

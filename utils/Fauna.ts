@@ -238,12 +238,7 @@ export async function getTransactions() {
         transaction_date: q.ToString(q.Select(['data', 'transaction_date'], q.Var('transDoc')))
       })))
   ));
-  const transdata = transactions.map((t: any) => {
-    const dt = moment.utc(t.transaction_date);
-    t.transaction_date = dt.local().format('MM/DD/yyyy h:mmA');
-    return t;
-  });
-  return transdata;
+  return transactions;
 }
 
 export async function getTransactionById(id: string) {

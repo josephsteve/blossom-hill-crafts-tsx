@@ -125,8 +125,8 @@ export default function Home() {
       body: JSON.stringify(data),
       headers: new Headers({'Content-Type': 'application/json'})
     });
-    router.push('/transaction');
-    console.log('response', '=>', await response.json());
+    const newtrans = await response.json();
+    router.push(`/transaction/detail/${newtrans.data}`);
   }
 
   return (

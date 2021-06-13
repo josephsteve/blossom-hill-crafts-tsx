@@ -10,8 +10,8 @@ export default async (_: NextApiRequest, res: NextApiResponse) => {
     const data = _.body;
     const cart_total = data.cart_total;
     const cart_details = data.cart_details;
-    const createdProduct = await cartPayNow(cart_total, cart_details);
-    return res.status(200).json(createdProduct);
+    const newtrans = await cartPayNow(cart_total, cart_details);
+    return res.status(200).json(newtrans);
   } catch (err) {
     console.error(err);
     res.status(500).json({msg: 'Something went wrong'});

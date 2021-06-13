@@ -226,11 +226,8 @@ export async function cartPayNow(cart_total: Transaction, cart_details: Transact
 export async function getTransactions() {
   let transactions: Transaction[];
   ({data: transactions} = await faunaClient.query(
-    q.Map(
-      q.Paginate(q.Documents(q.Collection('transactions'))),
-      q.Lambda('transRef', q.Let({
-        transDoc: q.Get(q.Var('transRef'))
-      }, {
+    q.Map(q.Map(q.Paginate(q.Match(q.Index('transactions_by_date'))), q.Lambda(['transaction_date', 'ref'], q.Get(q.Var('ref')))),
+      q.Lambda('docRef', q.Let({ transDoc: q.Var('docRef') }, {
         id: q.Select(['ref', 'id'], q.Var('transDoc')),
         trans_date: q.Select(['data', 'trans_date'], q.Var('transDoc')),
         total_items: q.Select(['data', 'total_items'], q.Var('transDoc')),
@@ -239,13 +236,41 @@ export async function getTransactions() {
         tax_amount: q.Select(['data', 'tax_amount'], q.Var('transDoc')),
         total_price: q.Select(['data', 'total_price'], q.Var('transDoc')),
         transaction_date: q.ToString(q.Select(['data', 'transaction_date'], q.Var('transDoc')))
+      })))
+  ));
+  return transactions;
+}
+
+export async function getTransactionById(id: string) {
+  const data: any = await faunaClient.query(
+    q.Let({
+      transDoc: q.Get(q.Ref(q.Collection('transactions'), id))
+    }, {
+      id: q.Select(['ref', 'id'], q.Var('transDoc')),
+      transaction_date: q.ToString(q.Select(['data', 'transaction_date'], q.Var('transDoc'))),
+      total_items: q.Select(['data', 'total_items'], q.Var('transDoc')),
+      detail_total: q.Select(['data', 'detail_total'], q.Var('transDoc')),
+      tax_rate: q.Select(['data', 'tax_rate'], q.Var('transDoc')),
+      tax_amount: q.Select(['data', 'tax_amount'], q.Var('transDoc')),
+      total_price: q.Select(['data', 'total_price'], q.Var('transDoc'))
+    })
+  );
+  return data;
+}
+
+export async function getTransactionDetailsByTransId(id: string) {
+  const data = await faunaClient.query(
+    q.Map(q.Paginate(q.Match(q.Index('transaction_details_by_transaction'), q.Ref(q.Collection('transactions'), id))),
+      q.Lambda('detailRef', q.Let({
+        detailDoc: q.Get(q.Var('detailRef'))
+      }, {
+        product_id: q.Select(['data', 'product_id'], q.Var('detailDoc')),
+        display_name: q.Select(['data', 'product_display_name'], q.Var('detailDoc')),
+        description: q.Select(['data', 'product_description'], q.Var('detailDoc')),
+        price_sell: q.Select(['data', 'price_sell'], q.Var('detailDoc')),
+        supplier_name: q.Select(['data', 'supplier_name'], q.Var('detailDoc'))
       }))
     )
-  ));
-  const transdata = transactions.map((t: any) => {
-    const dt = moment(t.transaction_date);
-    t.transaction_date = dt.format('MM/DD/yyyy h:mmA');
-    return t;
-  });
-  return transdata;
+  );
+  return data;
 }

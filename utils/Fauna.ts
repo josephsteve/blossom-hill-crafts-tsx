@@ -239,7 +239,7 @@ export async function getTransactions() {
       })))
   ));
   const transdata = transactions.map((t: any) => {
-    const dt = moment(t.transaction_date);
+    const dt = moment.utc(t.transaction_date);
     t.transaction_date = dt.local().format('MM/DD/yyyy h:mmA');
     return t;
   });
